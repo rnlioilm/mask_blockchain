@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>東京都〇〇市△△店</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+         $(function () {
+             $.ajax({
+                 url: '/prefecture',
+                 type: 'POST',
+                 success: function (response) {
+                     $('#public_key').val(response['public_key']);
+                     $('#private_key').val(response['private_key']);
+                     $('#blockchain_address').val(response['blockchain_address']);
+                     console.info(response);
+                 },
+                 error: function (error) {
+                     console.error(error);
+                 }
+             })
+             function reload_amount() {
+                 let data = {'blockchain_address': $('#blockchain_address').val()}
+                 $.ajax({
+                     url: '/wallet/amount',
+                     type: 'GET',
+                     data: data,
+                     success: function (response) {
+                         let amount = response['amount'];
+                         $('#wallet_amount').text(amount);
+                         console.log(amount);
+                     },
+                     error: function (error) {
+                         console.error(error);
+                     }
+                 })
+                 $.ajax({
+                     url: '/maps/amount',
+                     type: 'GET',
+                     data: data,
+                     success: function (response) {
+                         let amount = response['amount'];
+                         $('#wallet_amount').text(amount);
+                         console.log(amount);
+                     },
+                     error: function (error) {
+                         console.error(error);
+                     }
+                 })
+             }
+
+
+
+             setInterval(reload_amount, 3000);
+
+
+         })
+    </script>
+</head>
+<body>
+        <h1>Prefecture</h1>
+        <div id="wallet_amount">0</div>
+        <h2>東京都〇〇市△△店のブロックチェーンアドレス</h2>
+        <textarea id="blockchain_address" rows="1" cols="100"></textarea>
+        <p>このアドレスを指定して送信するとマスクの枚数が一枚減ります。マスクの枚数を公開すればマスクの在庫をリアルタイムで確認できる為、移動を少なくすることが出来ます。</p>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>東京都〇〇市△△店空き枚数</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+         $(function () {
+             function reload_amount() {
+                 $.ajax({
+                     url: '/maps/amount',
+                     type: 'GET',
+                     data: data,
+                     success: function (response) {
+                         let amount = response['amount'];
+                         $('#wallet_amount').text(amount);
+                         console.log(amount);
+                     },
+                     error: function (error) {
+                         console.error(error);
+                     }
+                 })
+             }
+
+
+
+             setInterval(reload_amount, 3000);
+
+
+         })
+    </script>
+    <body>
+        <h1>map</h1>
+        <div id="wallet_amount">0</div>
+</body>
+</html>

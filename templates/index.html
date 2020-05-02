@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>送信フォーム</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+         $(function () {
+             $.ajax({
+                 url: '/wallet',
+                 type: 'POST',
+                 success: function (response) {
+                     $('#public_key').val(response['public_key']);
+                     $('#private_key').val(response['private_key']);
+                     $('#blockchain_address').val(response['blockchain_address']);
+                     console.info(response);
+                 },
+                 error: function (error) {
+                     console.error(error);
+                 }
+             })
+
+             $('#send_mask_button').click(function () {
+                let confirm_text = '送信';
+                let confirm_result = confirm(confirm_text);
+                if (confirm_result !== true) {
+                    alert('キャンセル');
+                    return
+                }
+
+                let transaction_data = {
+                    'sender_private_key': $('#private_key').val(),
+                    'sender_address': $('#blockchain_address').val(),
+                    'recipient_address': $('#recipient_address').val(),
+                    'sender_public_key': $('#public_key').val(),
+                    'value': $('#send_amount').val(),
+                    'my_number':$('#my_number').val(),
+                    'place':$('#place').val(),
+                };
+
+                $.ajax({
+                    url: '/transaction',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(transaction_data),
+                    success: function (response) {
+                        alert('無事成功しました')
+                    },
+                    error: function (response) {
+                        alert('失敗しました', error)
+                    }
+                })
+
+             })
+
+             function reload_amount() {
+                 let data = {'blockchain_address': $('#blockchain_address').val()}
+                 $.ajax({
+                     url: '/wallet/amount',
+                     type: 'GET',
+                     data: data,
+                     success: function (response) {
+                         let amount = response['amount'];
+                         $('#wallet_amount').text(amount);
+                         console.log(amount);
+                     },
+                     error: function (error) {
+                         console.error(error);
+                     }
+                 })
+             }
+
+             /*
+             $('#reload_wallet').click(function () {
+                    reload_amount();
+             });
+             */
+
+             setInterval(reload_amount, 3000);
+
+
+
+         })
+    </script>
+</head>
+<body>
+    <div>
+        <h2>Public Key</h2>
+        <textarea id="public_key" rows="2" cols="100"></textarea>
+        <h2>Private Key</h2>
+        <textarea id="private_key" rows="1" cols="100"></textarea>
+        <h2>Blockchain Address</h2>
+        <textarea id="blockchain_address" rows="1" cols="100"></textarea>
+    </div>
+<p>---------------------------</p>
+    <div>
+        <h2>情報入力欄</h2>
+        <div>
+            <h3>Address</h3><input id="recipient_address" size="100"
+                            type="text"><br>
+            <h3>Value</h3>
+            <p>子供なら2、大人なら1</p>
+            <!--<form id="send_amount">
+            <input  type="radio" name="example" value="1">大人用
+            <input  type="radio" name="example" value="2">子供用
+            </form>-->
+            <input id="send_amount" type="text"><br>
+            <p></p>
+            <h3>My_number</h3><input id="my_number" size = "13"
+                            type = "text" minlength="12" maxlength="12"><br>
+            <p>※12桁以外は送信できません。</p>
+            <h3>市区町村</h3><input id = "place" size = "50" type = "text"><br>
+
+            <button id="send_mask_button">送信</button>
+            <div id="wallet_amount">0</div>
+        </div>
+    </div>
+
+
+</body>
+</html>

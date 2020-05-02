@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>検索</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+         $(function () {
+             $.ajax({
+                 url: '/get_search',
+                 type: 'POST',
+                 success: function (response) {
+                     $('#search').val(responce['search']);
+                     console.info(response);
+                 },
+                 error: function (error) {
+                     console.error(error);
+                 }
+             })
+         $('#send_button').click(function () {
+             $.ajax({
+                 url: '/get_search',
+                 type: 'POST',
+                 contentType: 'application/json',
+                 dataType: 'json',
+                 data: JSON.stringify('#my_number'),
+                 success: function (response)
+                                       alert('Send success')
+                    },
+                    error: function (response) {
+                        alert('Send failed', error)
+                    }
+                })
+
+
+         })
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Prefecture</h1>
+        <h2>マイナンバーによる検索</h2>
+                <input id="my_number" size = "13"
+                            type = "text" minlength="12" maxlength="12"><br>
+            <p>※12桁以外は送信できません。</p>
+                    <button id="send_button">検索</button>
+        <h3>検索結果</h3>
+        <p>hello</p>
+    </div>
+</html>
